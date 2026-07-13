@@ -232,7 +232,7 @@ class http {
         return request;
     }
 
-    function jsondecode(json) {
+    function jsondecode(jsonString) {
         return KiwiJSONParser.parse(jsonString);
     }
 
@@ -251,8 +251,8 @@ class http {
         capture.postHeaders = headers;
         captureHistory.push( {
             postUrl = deepClone(URL),
-            postHeaders = deepClone(body),
-            postBody = deepClone(headers)
+            postHeaders = deepClone(headers),
+            postBody = deepClone(body)
         });
         local request = httprequest("post", URL, headers, body);
         if( stub._pauseNewRequests ) { request.stub.pause(); }
@@ -262,7 +262,7 @@ class http {
 
     function put(URL, headers, body) {
         // todo capture=
-        local request = httprequest("put", URL, headers body);
+        local request = httprequest("put", URL, headers, body);
         if( stub._pauseNewRequests ) { request.stub.pause(); }
         requests.push(request);
         return request;

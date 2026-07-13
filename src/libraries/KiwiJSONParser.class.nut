@@ -169,8 +169,10 @@ class KiwiJSONParser {
           //      but this finds table ('container') member methods too
           local err = false;
           foreach (akey, avalue in container) {
-            if (akey == key) err = true;
-            break
+            if (akey == key) {
+                err = true;
+                break;
+            }
           }
           if (err) throw "Duplicate key \"" + key + "\"";
           state = "ovalue";
@@ -286,7 +288,6 @@ class KiwiJSONParser {
     // check is the final state is not ok
     // or if there is somethign left in the str
     if (state != "ok" || regexp("[^\\s]").capture(str, start)) {
-        server.log(str);
       local min = @(a, b) a < b ? a : b;
       local near = str.slice(start, min(str.len(), start + 10));
       throw "JSON Syntax Error near `" + near + "`";

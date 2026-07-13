@@ -36,7 +36,7 @@ __EI.DEVICEGROUP_ID <- "stub-group-id"
 __EI.PRODUCT_NAME <- "stub-product-name"
 
 class fixedfrequencydac {
-    addbufferNewBuffer = null;
+    addBufferNewBuffer = null;
     function addbuffer(newBuffer) {
         addBufferNewBuffer = newBuffer;
     }
@@ -378,7 +378,7 @@ const USE_CS_L = 64;
 class spi {
     function chipselect(select) {}
     function configure(modeFlags, dataRate) {}
-    function disable();
+    function disable() {}
     function readblob(nubmerOfBytes) {
         return null;
     }
@@ -543,9 +543,9 @@ class hardware {
     pinY = pin();
     pinM = pin();
     spiflash = spiflash();
-    uart0 = uart;
-    uart1 = uart;
-    uart2 = uart;
+    uart0 = uart();
+    uart1 = uart();
+    uart2 = uart();
     spi0 = spi();
 
     stub = {
