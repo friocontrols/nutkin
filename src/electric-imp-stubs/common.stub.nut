@@ -81,7 +81,7 @@ class imp {
         return _environment;
     }
     function setEnvironment(environment) {
-        _environment <- environment;
+        _environment = environment;
     }
     function getbootromversion() {
         return "?";
@@ -148,7 +148,8 @@ class imp {
     function sleep(sleepTime) {
         local toCall = [];
         local toKeepArray = [];
-    
+        local toKeepTable = {};
+
         local sleepTimeInt = math.floor(sleepTime).tointeger();
         clock_s += sleepTimeInt;
         clock_subs += sleepTime - sleepTimeInt;
@@ -171,15 +172,15 @@ class imp {
                clock_subs >= value.activationTime_subs)) {
                 toCall.append(value);
             } else {
-                toKeepTable[key] <- value;
+                toKeepTable[index] <- value;
             }
-        }        
+        }
 
         timerArray.clear();
         timerArray.extend(toKeepArray);
         timerTable.clear();
-        foreach (index, value in timerTable) {
-            timerTable[index] = value;
+        foreach (index, value in toKeepTable) {
+            timerTable[index] <- value;
         }
 
         local function sortTime(first, second) {
@@ -335,7 +336,7 @@ class crypto {
         }
         return hash;
     }
-    function sha256() {
+    function sha256(dataToHash) {
         ::srand(1203572305);
         local hash = blob(32);
         local encValue = rand();
