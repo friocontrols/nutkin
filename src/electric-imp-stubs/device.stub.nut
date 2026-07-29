@@ -14,6 +14,10 @@ const DIGITAL_OUT = 1024;
 const DIGITAL_OUT_OD = 1280;
 const DIGITAL_OUT_OD_PULLUP = 1536;
 
+const ANALOG_IN = 1;
+const ANALOG_OUT = 2;
+const PWM_OUT = 1288;
+
 const PARITY_NONE = 0;
 const PARITY_EVEN = 1;
 const PARITY_ODD = 2;
@@ -491,7 +495,8 @@ const LINE_IDLE = 64;
 const WRITE_HALF_DONE = 128;
 
 class uart {
-    function configure(baudRate, wordSize, parity, stopBits, flags, callback) {
+    // callback and numberOfBytes are optional on impOS
+    function configure(baudRate, wordSize, parity, stopBits, flags, callback = null) {
         return 0;
     }
     function disable() {}
@@ -502,7 +507,7 @@ class uart {
     function read() {
         return -1;
     }
-    function readblob(numberOfBytes) {
+    function readblob(numberOfBytes = null) {
         return blob(0);
     }
     function readstring(numberOfChars) {
@@ -530,15 +535,27 @@ class hardware {
     i2cJK = i2c();
     pinA = pin();
     pinB = pin();
+    pinC = pin();
+    pinD = pin();
     pinE = pin();
     pinF = pin();
+    pinG = pin();
     pinH = pin();
+    pinJ = pin();
+    pinK = pin();
     pinL = pin();
     pinN = pin();
+    pinQ = pin();
+    pinR = pin();
+    pinS = pin();
     pinT = pin();
+    pinU = pin();
+    pinV = pin();
     pinW = pin();
     pinXA = pin();
     pinXB = pin();
+    pinXC = pin();
+    pinXD = pin();
     pinXE = pin();
     pinY = pin();
     pinM = pin();
@@ -553,6 +570,9 @@ class hardware {
         lightlevel = 0,
         millis = 0,
         micros = 0,
+        // When non-zero, every millis() call advances the clock by this amount before returning,
+        // so production code that busy-waits on hardware.millis() can reach its timeout.
+        autoIncrementMillis = 0,
         vbat = 0.0,
         voltage = 0.0,
         wakereason = WAKEREASON_POWER_ON,
@@ -567,6 +587,10 @@ class hardware {
         },
         function millisIncrement(by) {
             millis = millis + by;
+        },
+        // Make millis() self-advance by `step` on each call (0 disables).
+        function setAutoIncrementMillis(step) {
+            autoIncrementMillis = step;
         },
         function setMicros(us) {
             micros = us;
@@ -589,6 +613,7 @@ class hardware {
             lightlevel = 0;
             millis = 0;
             micros = 0;
+            autoIncrementMillis = 0;
             vbat = 0.0;
             voltage = 0.0;
             wakereason = WAKEREASON_POWER_ON;
@@ -612,10 +637,13 @@ class hardware {
     }
 
     function millis() {
-        if(typeof(stub.millis) != "integer") {
-            return stub.millis.tointeger();
+        local current = stub.millis;
+        stub.millis = stub.millis + stub.autoIncrementMillis;
+
+        if(typeof(current) != "integer") {
+            return current.tointeger();
         } else {
-            return stub.millis;
+            return current;
         }
     }
 

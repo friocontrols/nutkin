@@ -52,7 +52,30 @@ class imp {
     timerArray = [];
     timerTable = {};
 
+    // imp.net is device-only on real impOS, but `imp` is declared here (shared by both
+    // environments) so the slot has to live here too. Modelled as a plain table so a spec can
+    // reach into it; getcellinfo is deliberately absent, matching an imp005.
+    net = {
+        info = function() {
+            return imp.stub.netInfo;
+        }
+    };
+
     stub = {
+        info = {
+            type = "imp005",
+            environment = ENVIRONMENT_MODULE
+        },
+        netInfo = {
+            active = 0,
+            interface = [
+                { type = "ethernet" }
+            ]
+        },
+        // Contents of the 4 kB user-configuration area. null models virgin flash.
+        userConfiguration = null,
+        unhandledExceptionHandler = null,
+        wasReset = false,
         function addConfigParams(name, value) {
             imp.configparams[name] <- value;
         },
@@ -70,6 +93,20 @@ class imp {
             for( local i = 0; i < seconds; i += 0.01 ) {
                 imp.sleep( 0.01 );
             }
+        },
+        function setInfo(info_) {
+            imp.stub.info = info_;
+        },
+        function setNetInfo(netInfo_) {
+            imp.stub.netInfo = netInfo_;
+        },
+        function setUserConfiguration(configuration) {
+            imp.stub.userConfiguration = configuration;
+        },
+        function reset() {
+            imp.stub.userConfiguration = null;
+            imp.stub.unhandledExceptionHandler = null;
+            imp.stub.wasReset = false;
         }
     };
 
@@ -119,10 +156,19 @@ class imp {
     function getssid() {
         return "kiwi";
     }
+    function getuserconfiguration() {
+        return stub.userConfiguration;
+    }
     function info() {
-        return null;
+        return stub.info;
     }
     function onidle(callback) {}
+    function onunhandledexception(callback) {
+        stub.unhandledExceptionHandler = callback;
+    }
+    function reset() {
+        stub.wasReset = true;
+    }
     function rssi() {
         return 0;
     }
@@ -144,6 +190,9 @@ class imp {
     function setrescuepin(pin, polarity) {}
     function setsendbuffersize(newSize) {}
     function setstaticnetworkconfiguration(ip, netmask, gateway, dns) {}
+    function setuserconfiguration(configuration) {
+        stub.userConfiguration = configuration;
+    }
     function setwificonfiguration(SSID, password) {}
     function sleep(sleepTime) {
         local toCall = [];
