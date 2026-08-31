@@ -57,6 +57,21 @@ describe("Electric Imp stub fixes", function() {
         });
     });
 
+    describe("imp.clearconfiguration selectors (common.stub)", function() {
+
+        // A missing selector is a compile error at the call site, not a failed assertion, so
+        // naming all five here is the regression test.
+        it("accepts every documented selector", function() {
+            imp.clearconfiguration(CONFIG_WIFI);
+            imp.clearconfiguration(CONFIG_STATIC_NETWORK);
+            imp.clearconfiguration(CONFIG_PROXY);
+            imp.clearconfiguration(CONFIG_APN);
+            imp.clearconfiguration(CONFIG_ALL);
+
+            expect(CONFIG_ALL).to.not.equal(CONFIG_WIFI);
+        });
+    });
+
     describe("fixedfrequencydac (device.stub)", function() {
 
         it("stores the buffer passed to addbuffer", function() {

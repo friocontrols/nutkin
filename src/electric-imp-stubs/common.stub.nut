@@ -42,6 +42,14 @@ const ENVIRONMENT_CARD = 0;
 const ENVIRONMENT_MODULE = 1;
 const ENVIRONMENT_AGENT = 2;
 
+// Selectors for imp.clearconfiguration(). impOS does not publish their numeric values, and the
+// stub call ignores its argument, so only distinctness matters here.
+const CONFIG_WIFI = 1;
+const CONFIG_STATIC_NETWORK = 2;
+const CONFIG_PROXY = 3;
+const CONFIG_APN = 4;
+const CONFIG_ALL = 5;
+
 // No stub state is maintained for the imp object, as behaviour is very much Electric Imp's concern
 class imp {
     configparams = {};
